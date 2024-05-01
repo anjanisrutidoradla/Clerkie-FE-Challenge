@@ -21,9 +21,11 @@ export const validate = {
         );
         if (!!cumPayout) {
           if (cumPayout > paymentAmount) {
-            errors.push("Total payout should be less than payment amount");
+            errors.push("Total payout is more than the payment amount");
           } else if (cumPayout > cumBalance) {
             errors.push("Total payout should be less than total balance");
+          } else if (cumPayout < paymentAmount){
+            errors.push("Total payout is less than the total balance");
           }
         } else {
           errors.push("Enter payout amount");
