@@ -5,6 +5,7 @@ import { numToCurrencyString } from "@utils/number";
 import React, { useEffect, useState } from "react";
 import { ACCOUNTS } from "./AccountsList.constants";
 import { validate } from "./AccountsList.utils";
+import { calcProratedAmounts } from "../../../../utils/calcProratedAmounts";
 
 function AccountsList({
   formState,
@@ -57,17 +58,26 @@ function AccountsList({
 
   const onAccountToggle = (e, account) => {
     const selected = e.target.checked;
-
+    let toProrate=false;
+    const proratedAmounts=calcProratedAmounts(accountsList, parseInt(paymentAmount), account.id);
+    
+    if(Object.keys(proratedAmounts).length){
+      toProrate=true;
+    }
+    
     setAccountsList(
       accountsList.map((acc) =>
         acc.id === account.id
           ? {
               ...acc,
               selected,
-              value: selected ? acc.value : "",
+              value: selected ? (toProrate ? proratedAmounts[acc.id]:acc.value) : "",
               errors: selected ? acc.errors : []
             }
-          : acc
+          : {
+            ...acc,
+            value: acc.selected ? (toProrate ? proratedAmounts[acc.id]:acc.value) : "",
+          }
       )
     );
   };
